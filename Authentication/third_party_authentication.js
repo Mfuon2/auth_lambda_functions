@@ -27,12 +27,21 @@ exports.handler = (event, context, callback) => {
             if (err) {
                 callback(null, successResponse('Failed',err));
             } else {
-                const response = {
-                    AccessToken: data.AuthenticationResult.IdToken,
-                    ExpiresIn: data.AuthenticationResult.ExpiresIn,
-                    TokenType: 'auth'
-                };
-                callback(null, successResponse('Successful',response));
+                console.log(data)
+                if(data.ChallengeName !== undefined && data.ChallengeName == "NEW_PASSWORD_REQUIRED"){
+                    const response = {
+                        Message: data.ChallengeName,
+                        Session: data.Session
+                    };
+                    callback(null, successResponse('Password reset is required',response));
+                }else{
+                    const response = {
+                        AccessToken: data.AuthenticationResult.IdToken,
+                        ExpiresIn: data.AuthenticationResult.ExpiresIn,
+                        TokenType: 'auth'
+                    };
+                    callback(null, successResponse('Successful',response));
+                }
             }
         });
     }
